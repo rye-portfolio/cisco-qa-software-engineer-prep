@@ -58,6 +58,11 @@ public class OrdersController {
 
         List<OrderRequestLine> lines = buildLines(stockItemIds, quantities);
 
+        if (lines.isEmpty()) {
+            return showOrderError(currentUser, authentication, model,
+                    "Select at least one item and quantity to create an order.");
+        }
+
         try {
             orderService.createOrder(currentUser, lines);
         } catch (InsufficientStockException e) {

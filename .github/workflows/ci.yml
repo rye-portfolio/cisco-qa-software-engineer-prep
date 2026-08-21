@@ -21,7 +21,7 @@ jobs:
       # Convention: smoke test classes are named *SmokeTest and picked up by this pattern.
       - name: Run smoke tests
         working-directory: WebApp
-        run: mvn -B test -Dtest='*SmokeTest' -DfailIfNoTests=false
+        run: mvn -B test -Dtest='*SmokeTest' -Dsurefire.failIfNoSpecifiedTests=false
 
   system-tests:
     name: System Tests
@@ -37,7 +37,7 @@ jobs:
       # Convention: system test classes are named *SystemTest and picked up by this pattern.
       - name: Run system tests
         working-directory: WebApp
-        run: mvn -B test -Dtest='*SystemTest' -DfailIfNoTests=false
+        run: mvn -B test -Dtest='*SystemTest' -Dsurefire.failIfNoSpecifiedTests=false
       - name: Upload system test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -63,7 +63,7 @@ jobs:
           cache: maven
       - name: Package
         working-directory: WebApp
-        run: mvn -B -DskipTests package
+        run: mvn -B package
       - name: Upload jar artifact
         uses: actions/upload-artifact@v4
         with:

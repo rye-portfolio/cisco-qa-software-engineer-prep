@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="nav">
+    <a href="/orders">Orders</a> | <a href="/stock">Stock</a> |
+    <a href="/users" sec:authorize="hasAuthority('MANAGE_USERS')">Users</a> |
+    <form th:action="@{/logout}" method="post" style="display:inline"><button type="submit">Log out</button></form>
+</nav>
+</body>
+</html>

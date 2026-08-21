@@ -19,7 +19,7 @@ jobs:
       # TODO: replace with the real Selenium/Java smoke test framework once available.
       - name: Run smoke tests
         working-directory: WebApp
-        run: mvn -B test -Dtest='*SmokeTest' -DfailIfNoTests=false
+        run: mvn -B test -Dtest='*SmokeTest' -Dsurefire.failIfNoSpecifiedTests=false
 
   system-tests:
     name: System Tests
@@ -34,7 +34,7 @@ jobs:
       # TODO: replace with the real Selenium/Java system test framework once available.
       - name: Run system tests
         working-directory: WebApp
-        run: mvn -B test -Dtest='*SystemTest' -DfailIfNoTests=false
+        run: mvn -B test -Dtest='*SystemTest' -Dsurefire.failIfNoSpecifiedTests=false
 
   build:
     name: Build Release Artifact
@@ -49,7 +49,7 @@ jobs:
           cache: maven
       - name: Package
         working-directory: WebApp
-        run: mvn -B -DskipTests package
+        run: mvn -B package
       - name: Upload release jar artifact
         uses: actions/upload-artifact@v4
         with:

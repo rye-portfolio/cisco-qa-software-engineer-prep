@@ -29,3 +29,6 @@ replay_pid*
 # SQLite runtime database
 *.db
 *.db-journal
+
+# Maven build output
+target/

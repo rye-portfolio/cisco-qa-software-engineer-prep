@@ -2,11 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head><title>Stock</title></head>
 <body>
-<nav>
-    <a href="/orders">Orders</a> | <a href="/stock">Stock</a> |
-    <a href="/users" sec:authorize="hasAuthority('MANAGE_USERS')">Users</a>
-</nav>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
 <h1>Stock</h1>
+<p th:if="${error}" id="stock-error" th:text="${error}"></p>
 <table id="stock-table">
     <thead><tr><th>Id</th><th>Name</th><th>Quantity</th></tr></thead>
     <tbody>
