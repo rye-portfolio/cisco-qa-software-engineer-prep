@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head><title>Users</title></head>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Users</title>
+    <style th:replace="~{fragments/nav :: global-style}"></style>
+</head>
 <body>
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <h1>Users</h1>
-<p th:if="${error}" id="user-error" th:text="${error}"></p>
+<p th:if="${error}" id="user-error" class="error" th:text="${error}"></p>
 <table id="users-table">
     <thead><tr><th>Id</th><th>Username</th><th>Manage Users</th><th>Manage Stock</th><th>View All Orders</th></tr></thead>
     <tbody>
@@ -20,29 +25,47 @@
 
 <h2>Create User</h2>
 <form th:action="@{/users/create}" method="post" id="create-user-form">
-    <label for="new-username">Username</label>
-    <input type="text" id="new-username" name="username"/>
-    <label for="new-password">Password</label>
-    <input type="password" id="new-password" name="password"/>
-    <label for="new-manageUsers">Manage Users</label>
-    <input type="checkbox" id="new-manageUsers" name="manageUsers"/>
-    <label for="new-manageStock">Manage Stock</label>
-    <input type="checkbox" id="new-manageStock" name="manageStock"/>
-    <label for="new-viewAllOrders">View All Orders</label>
-    <input type="checkbox" id="new-viewAllOrders" name="viewAllOrders"/>
+    <div class="field">
+        <label for="new-username">Username</label>
+        <input type="text" id="new-username" name="username"/>
+    </div>
+    <div class="field">
+        <label for="new-password">Password</label>
+        <input type="password" id="new-password" name="password"/>
+    </div>
+    <div class="field-checkbox">
+        <input type="checkbox" id="new-manageUsers" name="manageUsers"/>
+        <label for="new-manageUsers">Manage Users</label>
+    </div>
+    <div class="field-checkbox">
+        <input type="checkbox" id="new-manageStock" name="manageStock"/>
+        <label for="new-manageStock">Manage Stock</label>
+    </div>
+    <div class="field-checkbox">
+        <input type="checkbox" id="new-viewAllOrders" name="viewAllOrders"/>
+        <label for="new-viewAllOrders">View All Orders</label>
+    </div>
     <button type="submit" id="create-user-submit">Create</button>
 </form>
 
 <h2>Update Permissions</h2>
 <form th:action="@{/users/update}" method="post" id="update-user-form">
-    <label for="update-user-id">User Id</label>
-    <input type="number" id="update-user-id" name="id"/>
-    <label for="update-manageUsers">Manage Users</label>
-    <input type="checkbox" id="update-manageUsers" name="manageUsers"/>
-    <label for="update-manageStock">Manage Stock</label>
-    <input type="checkbox" id="update-manageStock" name="manageStock"/>
-    <label for="update-viewAllOrders">View All Orders</label>
-    <input type="checkbox" id="update-viewAllOrders" name="viewAllOrders"/>
+    <div class="field">
+        <label for="update-user-id">User Id</label>
+        <input type="number" id="update-user-id" name="id"/>
+    </div>
+    <div class="field-checkbox">
+        <input type="checkbox" id="update-manageUsers" name="manageUsers"/>
+        <label for="update-manageUsers">Manage Users</label>
+    </div>
+    <div class="field-checkbox">
+        <input type="checkbox" id="update-manageStock" name="manageStock"/>
+        <label for="update-manageStock">Manage Stock</label>
+    </div>
+    <div class="field-checkbox">
+        <input type="checkbox" id="update-viewAllOrders" name="viewAllOrders"/>
+        <label for="update-viewAllOrders">View All Orders</label>
+    </div>
     <button type="submit" id="update-user-submit">Update</button>
 </form>
 </body>
