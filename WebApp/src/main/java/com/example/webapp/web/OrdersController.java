@@ -51,20 +51,29 @@ public class OrdersController {
                                @RequestParam("quantity") List<Integer> quantities,
                                Authentication authentication, Model model) {
         User currentUser = currentUser(authentication);
+
+        if (stockItemIds.size() != quantities.size()) {
+            return showOrderError(currentUser, authentication, model, "Invalid order submission.");
+        }
+
         List<OrderRequestLine> lines = buildLines(stockItemIds, quantities);
 
         try {
             orderService.createOrder(currentUser, lines);
         } catch (InsufficientStockException e) {
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("orders", orderService.findOrdersByCreator(currentUser));
-            model.addAttribute("viewingAll", false);
-            model.addAttribute("canViewAll", hasAuthority(authentication, "VIEW_ALL_ORDERS"));
-            model.addAttribute("stockItems", stockService.findAll());
-            return "orders";
+            return showOrderError(currentUser, authentication, model, e.getMessage());
         }
 
         return "redirect:/orders";
+    }
+
+    private String showOrderError(User currentUser, Authentication authentication, Model model, String message) {
+        model.addAttribute("error", message);
+        model.addAttribute("orders", orderService.findOrdersByCreator(currentUser));
+        model.addAttribute("viewingAll", false);
+        model.addAttribute("canViewAll", hasAuthority(authentication, "VIEW_ALL_ORDERS"));
+        model.addAttribute("stockItems", stockService.findAll());
+        return "orders";
     }
 
     private List<OrderRequestLine> buildLines(List<Long> stockItemIds, List<Integer> quantities) {
