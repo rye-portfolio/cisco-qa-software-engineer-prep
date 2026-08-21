@@ -25,3 +25,7 @@ replay_pid*
 
 # Local git worktrees
 .worktrees/
+
+# SQLite runtime database
+*.db
+*.db-journal
