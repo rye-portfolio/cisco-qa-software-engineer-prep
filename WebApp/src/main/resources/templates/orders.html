@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Orders</title>
+    <style th:replace="~{fragments/nav :: global-style}"></style>
+</head>
+<body>
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+<h1>Orders</h1>
+<p th:if="${error}" id="order-error" class="error" th:text="${error}"></p>
+
+<a th:if="${canViewAll}" id="view-all-toggle"
+   th:href="${viewingAll} ? '/orders' : '/orders?all=true'"
+   th:text="${viewingAll} ? 'View my orders' : 'View all orders'"></a>
+
+<table id="orders-table">
+    <thead><tr><th>Id</th><th>Creator</th><th>When</th><th>Status</th><th>Items</th></tr></thead>
+    <tbody>
+    <tr th:each="order : ${orders}" class="order-row">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.creator.username}"></td>
+        <td th:text="${order.createdAt}"></td>
+        <td th:text="${order.status}"></td>
+        <td>
+            <span th:each="line : ${order.lines}" th:text="${line.stockItem.name} + ' x' + ${line.quantity} + ' '"></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>New Order</h2>
+<form th:action="@{/orders}" method="post" id="new-order-form">
+    <div class="field" th:each="item : ${stockItems}">
+        <input type="hidden" th:name="stockItemId" th:value="${item.id}"/>
+        <label th:for="${'quantity-' + item.id}" th:text="${item.name} + ' (available: ' + ${item.quantity} + ')'"></label>
+        <input type="number" th:name="quantity" th:id="${'quantity-' + item.id}" min="0" value="0"/>
+    </div>
+    <button type="submit" id="create-order-submit">Create Order</button>
+</form>
+</body>
+</html>
