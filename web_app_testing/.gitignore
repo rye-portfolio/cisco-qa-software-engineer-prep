@@ -12,3 +12,6 @@ wheels/
 
 # UV
 .ruff_cache
+
+# Manually downloaded WebDriver binaries
+drivers/

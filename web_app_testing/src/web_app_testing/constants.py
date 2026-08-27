@@ -1,0 +1,3 @@
+MAX_PAGE_LOAD_SECONDS = 3
+ADMIN_PASSWORD = "password"
+USER_PASSWORD = "password"
