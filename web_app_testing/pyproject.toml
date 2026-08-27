@@ -12,6 +12,7 @@ dependencies = [
     "selenium>=4.47",
     "requests>=2.34",
     "ruff>=0.16.4",
+    "allure-pytest>=2.16.0",
 ]
 
 [build-system]
