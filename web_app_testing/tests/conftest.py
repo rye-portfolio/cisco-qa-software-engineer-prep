@@ -22,6 +22,13 @@ def edge() -> WebDriver:
     options = EdgeOptions()
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+    # A fresh profile's first navigation can hang behind Edge's first-run/
+    # sign-in-nudge/"make default browser" dialogs, which steal focus and
+    # never let the initial driver.get() page-load complete (manifesting as
+    # a Selenium ReadTimeoutError). InPrivate skips that onboarding outright.
+    options.add_argument("--inprivate")
+    options.add_argument("--no-first-run")
+    options.add_argument("--no-default-browser-check")
 
     driver_path = DRIVERS_DIR / "msedgedriver.exe"
     if platform.system() == "Windows" and driver_path.is_file():
