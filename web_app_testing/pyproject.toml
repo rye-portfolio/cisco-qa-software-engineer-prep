@@ -1,0 +1,22 @@
+[project]
+version = "0.1.0"
+name = "web_app_testing"
+description = "Tests WebApp using pytest and Selenium"
+requires-python = ">=3.14"
+readme="README.md"
+authors = [
+    {name = "Rye Fry", email = "contact@ryefry.com"}
+]
+dependencies = [
+    "pytest>=9.1",
+    "selenium>=4.47",
+    "requests>=2.34",
+    "ruff>=0.16.4",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.6,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.pyright]
+reportUnknownMemberType = "none"

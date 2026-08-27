@@ -32,3 +32,20 @@ replay_pid*
 
 # Maven build output
 target/
+
+.settings/
+grid/assets
+
+# Intellij
+.idea/
+*.iml
+
+# Maven
+logs/
+target/
+
+# Allure
+.allure
+
+# Claude
+docs/superpowers
