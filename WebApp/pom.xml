@@ -13,7 +13,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>webapp</artifactId>
-    <version>0.1.0</version>
+    <version>0.0.0-local</version>
     <name>webapp</name>
     <description>Sample QA-automation System Under Test</description>
 
