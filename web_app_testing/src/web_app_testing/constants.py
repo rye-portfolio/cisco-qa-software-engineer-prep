@@ -1,3 +1,3 @@
-MAX_PAGE_LOAD_SECONDS = 3
-ADMIN_PASSWORD = "password"
-USER_PASSWORD = "password"
+PAGE_LOAD_TIMEOUT_SECONDS = 3
+
+LOGIN_PAGE_REDIRECT_URL = "http://localhost:8080/orders"

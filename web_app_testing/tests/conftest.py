@@ -9,9 +9,22 @@ from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.remote.webdriver import WebDriver
 
-# --- For if executables exist at `web_app_testing/drivers` (Windows only) ---
-DRIVERS_DIR = Path(__file__).resolve().parent.parent / "drivers"
+# ====================================================================================
+# Setting up pytest to use string repr for test IDs automatically
+# ====================================================================================
 
+def pytest_make_parametrize_id(config: pytest.Config, val: object, argname: str):
+    if val == edge:
+        return "edge"
+    if val == firefox:
+        return "firefox"
+    return repr(val)
+
+# ====================================================================================
+# Setting up tests to run on Edge and Firefox, working on local machine and on CI/CD
+# ====================================================================================
+
+DRIVERS_DIR = Path(__file__).resolve().parent.parent / "drivers"
 
 def edge() -> WebDriver:
     # Chromium's sandbox needs to create a user namespace, which CI runners
@@ -34,7 +47,6 @@ def edge() -> WebDriver:
     if platform.system() == "Windows" and driver_path.is_file():
         return webdriver.Edge(service=EdgeService(executable_path=str(driver_path)), options=options)
     return webdriver.Edge(options=options)
-
 
 def firefox() -> WebDriver:
     driver_path = DRIVERS_DIR / "geckodriver.exe"
