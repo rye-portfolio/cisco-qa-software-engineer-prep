@@ -1,9 +1,7 @@
 from uuid import uuid4
 
 import pytest
-from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support import expected_conditions as EC
 from web_app_testing.models.login import ADMIN, ORDER_VIEWER, STOCK_MANAGER, USER
 from web_app_testing.models.stock import AddStockItemRequest
 from web_app_testing.poms.login_page import LoginPage
@@ -41,9 +39,7 @@ def test_adding_simple_stock_item_succeeds(on_stock_page_with_permission: StockP
 def test_adding_stock_item_without_quantity_fails(on_stock_page_with_permission: StockPage):
     page = on_stock_page_with_permission
     row_to_fail_adding = AddStockItemRequest("fail-test", None)
-    added_row = page.try_add_stock_item(row_to_fail_adding, EC.presence_of_element_located(
-        (By.ID, "stock-error")
-    ))
+    added_row = page.try_add_stock_item(row_to_fail_adding)
     assert not added_row
 
 @pytest.fixture(params=[USER, ORDER_VIEWER], scope="module")

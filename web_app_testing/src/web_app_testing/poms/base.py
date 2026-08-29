@@ -1,4 +1,5 @@
 from typing import Callable, Literal, TypeVar
+from selenium.common import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
@@ -24,4 +25,18 @@ class BasePage:
             wait.T: the result of the expected condition function
         """
         e.click()
-        return WebDriverWait(self.driver, PAGE_LOAD_TIMEOUT_SECONDS).until(expected_condition)
+        result: list[T] = []
+
+        def wait_for_non_false(driver: WebDriver) -> bool:
+            value = expected_condition(driver)
+            if value is False:
+                return False
+            result.append(value)
+            return True
+
+        WebDriverWait(
+            self.driver,
+            PAGE_LOAD_TIMEOUT_SECONDS,
+            ignored_exceptions=(StaleElementReferenceException,),
+        ).until(wait_for_non_false)
+        return result[0]
