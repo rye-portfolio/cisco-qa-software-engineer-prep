@@ -8,7 +8,7 @@ def test_logging_out_as_builtin_user_returns_to_empty_login_page(driver: WebDriv
     order_page = LoginPage(driver).log_in(login)
 
     # After clicking logout button and changing URLs, we should be back at the login screen.
-    login_page = order_page.navbar().assert_log_out()
+    login_page = order_page.navbar().log_out()
 
     assert login_page, "Failed to log out"
 

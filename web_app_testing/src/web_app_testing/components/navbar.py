@@ -25,7 +25,7 @@ class NavBar:
         #   </form>
         return self.page.driver.find_element(By.CSS_SELECTOR, 'form[action="/logout"][method="post"] button[type="submit"]')
 
-    def assert_log_out(self) -> LoginPage:
+    def log_out(self) -> LoginPage:
         from web_app_testing.poms.login_page import LoginPage
         assert self.page.click_and_await(self.find_logout_button(), EC.url_to_be(LOGOUT_REDIRECT_URL)), "Failed to log out"
         return LoginPage(self.page.driver)
@@ -36,7 +36,7 @@ class NavBar:
     def find_stock_link(self):
         return self.page.driver.find_element(By.CSS_SELECTOR, 'a[href="/stock"]')
 
-    def assert_fail_to_navigate_to_stock(self) -> StockPage:
+    def navigate_to_stock_page(self) -> StockPage:
         from web_app_testing.poms.stock_page import StockPage
         assert self.page.click_and_await(self.find_stock_link(), EC.url_to_be(STOCK_URL)), "Failed to navigate to Stock page"
         return StockPage(self.page.driver)

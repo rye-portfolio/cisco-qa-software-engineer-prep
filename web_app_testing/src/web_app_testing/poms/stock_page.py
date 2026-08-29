@@ -15,7 +15,7 @@ def to_stock_row(row: WebElement) -> StockItemRow | None:
         tr=row,
         id=int(row_values[0].text),
         name=row_values[1].text,
-        quantity=int(row_values[2].text),
+        quantity=row_values[2].text,
     )
     
 @dataclass
@@ -23,7 +23,7 @@ class StockItemRow:
     tr: WebElement
     id: int
     name: str
-    quantity: int
+    quantity: str
 
 @dataclass
 class StockPage(PageWithNavBar):

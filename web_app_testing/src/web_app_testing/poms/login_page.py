@@ -23,7 +23,7 @@ class LoginPage(BasePage):
     def find_password_input(self) -> WebElement:
         return self.driver.find_element(By.ID, "password")
 
-    def __find_submit_button(self) -> WebElement:
+    def find_submit_button(self) -> WebElement:
         return self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
 
     def __await_login_result(self) -> OrderPage | None | Literal[False]:
@@ -36,7 +36,7 @@ class LoginPage(BasePage):
     def try_log_in(self, login: LoginRequest) -> OrderPage | None:
         self.find_username_input().send_keys(login.username)
         self.find_password_input().send_keys(login.password)
-        return self.click_and_await(self.__find_submit_button(), lambda _ : self.__await_login_result())
+        return self.click_and_await(self.find_submit_button(), lambda _ : self.__await_login_result())
 
     def log_in(self, login: LoginRequest) -> OrderPage:
         result = self.try_log_in(login)
