@@ -1,14 +1,10 @@
 from dataclasses import dataclass
 from typing import Literal
-from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support import expected_conditions as EC
-from web_app_testing.models.login import LoginRequest
 from web_app_testing.constants import STOCK_URL
 from web_app_testing.models.stock import AddStockItemRequest
-from web_app_testing.poms.base import BasePage
 from web_app_testing.poms.with_navbar import PageWithNavBar
 
 def to_stock_row(row: WebElement) -> StockItemRow | None:
@@ -51,25 +47,23 @@ class StockPage(PageWithNavBar):
         assert result, "Last stock row is malformed"
         return result
 
-    def __await_add_stock_result(self) -> StockItemRow | None | Literal[False]:
-        new_row_id = self.find_last_stock_row().id
-        row = self.driver.find_element(By.CSS_SELECTOR, f"tr.stock-row:nth-child({new_row_id})")
-        if row:
-            row = to_stock_row(row)
-            assert row
-            return row
-        if self.driver.find_element(By.ID, "stock-error"):
+    def __await_add_stock_result(self, row_count_before: int) -> StockItemRow | None | Literal[False]:
+        rows = self.driver.find_elements(By.CLASS_NAME, "stock-row")
+        if len(rows) > row_count_before:
+            return self.find_last_stock_row()
+        if self.driver.find_elements(By.ID, "stock-error"):
             return None
         return False
 
     def try_add_stock_item(self, stock_item: AddStockItemRequest) -> StockItemRow | None:
+        row_count_before = len(self.driver.find_elements(By.CLASS_NAME, "stock-row"))
         if stock_item.name:
             self.find_add_stock_item_name_input().send_keys(stock_item.name)
         if stock_item.quantity:
             self.find_add_stock_item_quantity_input().send_keys(str(stock_item.quantity))
         return self.click_and_await(
             self.find_add_stock_item_button(),
-            lambda _ : self.__await_add_stock_result()
+            lambda _ : self.__await_add_stock_result(row_count_before)
         )
 
     def add_stock_item(self, stock_item: AddStockItemRequest) -> StockItemRow:
