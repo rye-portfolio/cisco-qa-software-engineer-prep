@@ -1,32 +1,42 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support import expected_conditions as EC
 from web_app_testing.constants import LOGOUT_REDIRECT_URL, STOCK_URL
-from web_app_testing.utils import assert_click_redirects_to
+from web_app_testing.poms.base import BasePage
 
-# ======================================================================
-# LOG OUT
-# ======================================================================
-def __find_logout_button(driver: WebDriver):
-    # Matches this HTML:
-    #   <form action="/logout" method="post">
-    #       <button type="submit"></button>
-    #   </form>
-    return driver.find_element(By.CSS_SELECTOR, 'form[action="/logout"][method="post"] button[type="submit"]')
+if TYPE_CHECKING:
+    from web_app_testing.poms.login_page import LoginPage
+    from web_app_testing.poms.stock_page import StockPage
 
-def __try_log_out(driver: WebDriver) -> bool:
-    return assert_click_redirects_to(__find_logout_button(driver), LOGOUT_REDIRECT_URL, driver)
+@dataclass
+class NavBar:
+    page: BasePage
 
-def assert_log_out(driver: WebDriver) -> None:
-    assert __try_log_out(driver), "Failed to log out"
+    # ======================================================================
+    # LOG OUT
+    # ======================================================================
+    def find_logout_button(self):
+        # Matches this HTML:
+        #   <form action="/logout" method="post">
+        #       <button type="submit"></button>
+        #   </form>
+        return self.page.driver.find_element(By.CSS_SELECTOR, 'form[action="/logout"][method="post"] button[type="submit"]')
 
-# ======================================================================
-# STOCK LINK 
-# ======================================================================
-def __find_stock_link(driver: WebDriver):
-    return driver.find_element(By.CSS_SELECTOR, 'a[href="/stock"]')
+    def assert_log_out(self) -> LoginPage:
+        from web_app_testing.poms.login_page import LoginPage
+        assert self.page.click_and_await(self.find_logout_button(), EC.url_to_be(LOGOUT_REDIRECT_URL)), "Failed to log out"
+        return LoginPage(self.page.driver)
 
-def __try_navigate_to_stock(driver: WebDriver) -> bool:
-    return assert_click_redirects_to(__find_stock_link(driver), STOCK_URL, driver)
+    # ======================================================================
+    # STOCK LINK 
+    # ======================================================================
+    def find_stock_link(self):
+        return self.page.driver.find_element(By.CSS_SELECTOR, 'a[href="/stock"]')
 
-def assert_navigate_to_stock(driver: WebDriver) -> None:
-    assert __try_navigate_to_stock(driver), "Failed to click Stock nav"
+    def assert_fail_to_navigate_to_stock(self) -> StockPage:
+        from web_app_testing.poms.stock_page import StockPage
+        assert self.page.click_and_await(self.find_stock_link(), EC.url_to_be(STOCK_URL)), "Failed to navigate to Stock page"
+        return StockPage(self.page.driver)

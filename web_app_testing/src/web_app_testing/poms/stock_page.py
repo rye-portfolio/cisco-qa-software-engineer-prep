@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from typing import Literal
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -6,8 +8,20 @@ from selenium.webdriver.support import expected_conditions as EC
 from web_app_testing.models.login import LoginRequest
 from web_app_testing.constants import STOCK_URL
 from web_app_testing.models.stock import AddStockItemRequest
-from web_app_testing.utils import assert_click
+from web_app_testing.poms.base import BasePage
+from web_app_testing.poms.with_navbar import PageWithNavBar
 
+def to_stock_row(row: WebElement) -> StockItemRow | None:
+    row_values = row.find_elements(By.TAG_NAME, "td")
+    if len(row_values) < 3 or any(not v.text for v in row_values[:3]):
+        return None
+    return StockItemRow(
+        tr=row,
+        id=int(row_values[0].text),
+        name=row_values[1].text,
+        quantity=int(row_values[2].text),
+    )
+    
 @dataclass
 class StockItemRow:
     tr: WebElement
@@ -16,42 +30,49 @@ class StockItemRow:
     quantity: int
 
 @dataclass
-class StockPage:
-    driver: WebDriver
+class StockPage(PageWithNavBar):
+    page_url = STOCK_URL
 
     def __init__(self, driver: WebDriver) -> None:
-        self.driver = driver
-        if driver.current_url != STOCK_URL:
-            driver.get(STOCK_URL)
+        super().__init__(driver)
 
-    def __find_add_stock_item_name_input(self) -> WebElement:
+    def find_add_stock_item_name_input(self) -> WebElement:
         return self.driver.find_element(By.ID, "new-item-name")
     
-    def __find_add_stock_item_quantity_input(self) -> WebElement:
+    def find_add_stock_item_quantity_input(self) -> WebElement:
         return self.driver.find_element(By.ID, "new-item-quantity")
 
-    def __find_add_stock_item_button(self) -> WebElement:
+    def find_add_stock_item_button(self) -> WebElement:
         return self.driver.find_element(By.ID, "create-stock-submit")
 
     def find_last_stock_row(self) -> StockItemRow:
         row = self.driver.find_elements(By.CLASS_NAME, "stock-row")[-1]
-        return self.to_stock_row(row)
+        result = to_stock_row(row)
+        assert result, "Last stock row is malformed"
+        return result
 
-    def to_stock_row(self, row: WebElement) -> StockItemRow:
-        row_values = row.find_elements(By.TAG_NAME, "td")
-        return StockItemRow(
-            tr=row,
-            id=int(row_values[0].get_attribute("value") or -1),
-            name=row_values[1].get_attribute("value") or "",
-            quantity=int(row_values[2].get_attribute("value") or -1),
+    def __await_add_stock_result(self) -> StockItemRow | None | Literal[False]:
+        new_row_id = self.find_last_stock_row().id
+        row = self.driver.find_element(By.CSS_SELECTOR, f"tr.stock-row:nth-child({new_row_id})")
+        if row:
+            row = to_stock_row(row)
+            assert row
+            return row
+        if self.driver.find_element(By.ID, "stock-error"):
+            return None
+        return False
+
+    def try_add_stock_item(self, stock_item: AddStockItemRequest) -> StockItemRow | None:
+        if stock_item.name:
+            self.find_add_stock_item_name_input().send_keys(stock_item.name)
+        if stock_item.quantity:
+            self.find_add_stock_item_quantity_input().send_keys(str(stock_item.quantity))
+        return self.click_and_await(
+            self.find_add_stock_item_button(),
+            lambda _ : self.__await_add_stock_result()
         )
 
-    def try_add_stock_item(self, stock_item: AddStockItemRequest) -> StockItemRow:
-        self.__find_add_stock_item_name_input().send_keys(stock_item.name)
-        self.__find_add_stock_item_quantity_input().send_keys(str(stock_item.quantity))
-        new_row_id = 1 + self.find_last_stock_row().id
-        return self.to_stock_row(assert_click(
-            self.__find_add_stock_item_button(),
-            EC.presence_of_element_located((By.CSS_SELECTOR, f"tr.stock-row:nth-child({new_row_id})")),
-            self.driver
-        ))
+    def add_stock_item(self, stock_item: AddStockItemRequest) -> StockItemRow:
+        result = self.try_add_stock_item(stock_item)
+        assert result
+        return result

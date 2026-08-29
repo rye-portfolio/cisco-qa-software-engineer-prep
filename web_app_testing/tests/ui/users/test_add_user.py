@@ -1,5 +1,7 @@
+import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
 
+@pytest.fixture
 def setup_users(driver: WebDriver):
     # Create users
     yield driver
