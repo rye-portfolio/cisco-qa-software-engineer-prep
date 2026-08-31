@@ -11,4 +11,5 @@ Some notes:
 * I made a simple `BasePage` POM with derived classes for the stock page, orders page, and users page.
 * I use custom fixtures to test on Firefox and Edge.
 * I use web driver waits to await the result of button clicks, e.g. awaiting a redirect or error for the Log In button
+* There's CI/CD that runs when merging into `main`, autotagging from semver if smoke tests pass, and generating an Allure report.
 * and more...
