@@ -13,3 +13,5 @@ Some notes:
 * I use web driver waits to await the result of button clicks, e.g. awaiting a redirect or error for the Log In button
 * There's CI/CD that runs when merging into `main`, autotagging from semver if smoke tests pass, and generating an Allure report.
 * and more...
+
+You can find my contact at ryefry.com.
